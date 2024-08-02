@@ -2,6 +2,7 @@
 
 # Chessboard Size
 # comment 1
+# This is a comment
 n = 8
 
 
