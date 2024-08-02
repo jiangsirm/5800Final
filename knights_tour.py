@@ -1,4 +1,6 @@
 import sys
+import time
+
 
 # Python3 program to solve Knight Tour problem using Backtracking
 # Chessboard Size
@@ -35,15 +37,18 @@ def printSolution(width, height, board):
     """
     for i in range(height):
         for j in range(width):
-            print(board[i][j], end=' ')
+            print(f"{board[i][j]:>{len(str(width * height)) + 1}}", end=' ')
         print()
+    print("*" * width)
+    time.sleep(1)
 
 
 # the outer function for backtracking
-def solveKT(width, height):
+def solveKT(width, height, print_stage=False):
     """
         the outer function for backtracking
 
+        :param print_stage: whether print each stage
         :param width: width of the board
         :param height: the height of the board
         :return: print a single solution for the problem
@@ -65,17 +70,19 @@ def solveKT(width, height):
     pos = 1
 
     # Checking if solution exists or not
-    if not solveKTUtil(width, height, board, 0, 0, move_x, move_y, pos):
+    if not solveKTUtil(width, height, board, 0, 0, move_x, move_y, pos, print_stage):
         print("Solution does not exist")
     else:
+        print("Final Result")
         printSolution(width, height, board)
 
 
 # function uses backtracking to find the answer
-def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos):
+def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos, print_stage):
     """
         The backtracking function for solving the problem
 
+        :param print_stage: whether print the baord
         :param width: width of the board
         :param height: the height of the board
         :param board: the 2D board array that would be operated upon
@@ -86,6 +93,9 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos):
         :param pos: number of cells visited already
         :return: A boolean value. If true there is a solution, else there is no solution
     """
+    if print_stage:
+        printSolution(width, height, board)
+
     if pos == width * height:
         return True
 
@@ -95,7 +105,7 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos):
         new_y = curr_y + move_y[i]
         if isSafe(new_x, new_y, board, width, height):
             board[new_x][new_y] = pos
-            if solveKTUtil(width, height, board, new_x, new_y, move_x, move_y, pos + 1):
+            if solveKTUtil(width, height, board, new_x, new_y, move_x, move_y, pos + 1, print_stage):
                 return True
 
             # Backtracking
@@ -106,8 +116,14 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos):
 # Driver Code
 if __name__ == "__main__":
     # Function Call
-    if len(sys.argv) != 3:
-        print("python knights_tour.py <width> <height>")
-    else:
+    if len(sys.argv) != 3 and len(sys.argv) != 4:
+        print("python knights_tour.py <width> <height> <(optional)print board: enter 1 to print the board>")
+    elif len(sys.argv) == 3:
         print("running")
         solveKT(int(sys.argv[1]), int(sys.argv[2]))
+    else:
+        if int(sys.argv[3]) != 1:
+            print("python knights_tour.py <width> <height> <(optional)print board: enter 1 to print the board>")
+        else:
+            print("printing")
+            solveKT(int(sys.argv[1]), int(sys.argv[2]), True)
