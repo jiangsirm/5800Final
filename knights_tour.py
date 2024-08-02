@@ -5,6 +5,7 @@ import time
 # Python3 program to solve Knight Tour problem using Backtracking
 # Chessboard Size
 # run the program by entering "python knights_tour.py <width> <height>" in terminal
+# run the program with print at each stage by entering "python knights_tour.py <width> <height> 1" in terminal
 
 
 # check for bounds of the movable positions
