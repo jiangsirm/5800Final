@@ -1,11 +1,14 @@
 import sys
 import time
 
+import matplotlib.pyplot as plt
+
 
 # Python3 program to solve Knight Tour problem using Backtracking
 # Chessboard Size
 # run the program by entering "python knights_tour.py <width> <height>" in terminal
 # run the program with print at each stage by entering "python knights_tour.py <width> <height> 1" in terminal
+# run the program with plotting at each stage by entering "python knights_tour.py <width> <height> 2" in terminal
 
 
 # check for bounds of the movable positions
@@ -45,7 +48,7 @@ def printSolution(width, height, board):
 
 
 # the outer function for backtracking
-def solveKT(width, height, print_stage=False):
+def solveKT(width, height, print_stage=0):
     """
         the outer function for backtracking
 
@@ -83,7 +86,7 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos, print
     """
         The backtracking function for solving the problem
 
-        :param print_stage: whether print the baord
+        :param print_stage: 1 for print to console or 2 to plot graph.
         :param width: width of the board
         :param height: the height of the board
         :param board: the 2D board array that would be operated upon
@@ -94,8 +97,17 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos, print
         :param pos: number of cells visited already
         :return: A boolean value. If true there is a solution, else there is no solution
     """
-    if print_stage:
+    if print_stage == 1:
         printSolution(width, height, board)
+    elif print_stage == 2:
+        mx = max([max(line) for line in board])
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == mx:
+                    continue
+                board[i][j] = 0 if board[i][j] != -1 else -1
+
+        plot_board(board, width, height)
 
     if pos == width * height:
         return True
@@ -114,17 +126,33 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos, print
     return False
 
 
+# Plotting function to provide graph as each stage.
+def plot_board(board, width, height):
+    plt.figure(figsize=(10, 10))
+    plt.imshow(board, cmap='coolwarm', interpolation='nearest', vmin=-1, vmax=width * height)
+    plt.title('Knight\'s Tour')
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+    plt.pause(1)  # control the frequency for updated frames
+    plt.clf()
+
+
 # Driver Code
 if __name__ == "__main__":
     # Function Call
     if len(sys.argv) != 3 and len(sys.argv) != 4:
-        print("python knights_tour.py <width> <height> <(optional)print board: enter 1 to print the board>")
+        print("python knights_tour.py <width> <height> <(optional)print board: enter 1 to print the board or 2"
+              " to plot the graph>")
     elif len(sys.argv) == 3:
         print("running")
         solveKT(int(sys.argv[1]), int(sys.argv[2]))
     else:
-        if int(sys.argv[3]) != 1:
-            print("python knights_tour.py <width> <height> <(optional)print board: enter 1 to print the board>")
+        if int(sys.argv[3]) != 1 and int(sys.argv[3]) != 2:
+            print("python knights_tour.py <width> <height> <(optional)print board: enter 1 to print the board or 2"
+                  " to plot the graph>")
+        elif int(sys.argv[3]) == 2:
+            print("plotting")
+            solveKT(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
         else:
             print("printing")
-            solveKT(int(sys.argv[1]), int(sys.argv[2]), True)
+            solveKT(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
