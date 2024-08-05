@@ -23,13 +23,11 @@ def isSafe(x, y, board, width, height):
         :param height: the height of the board
         :return: a boolean value. If true that position can be moved to, else the position is not available.
     """
-
-    if 0 <= x < height and 0 <= y < width and board[x][y] == -1:
-        return True
-    return False
+    # check if the new position is within the board, and whether it is unoccupied.
+    return 0 <= x < height and 0 <= y < width and board[x][y] == -1
 
 
-# function to print out the board if there is a solution
+# function to print out the board
 def printSolution(width, height, board):
     """
         function to print out the board if there is a solution
@@ -44,7 +42,6 @@ def printSolution(width, height, board):
             print(f"{board[i][j]:>{len(str(width * height)) + 1}}", end=' ')
         print()
     print("*" * width)
-    time.sleep(1)
 
 
 # the outer function for backtracking
@@ -74,7 +71,7 @@ def solveKT(width, height, print_stage=0):
     pos = 1
 
     # Checking if solution exists or not
-    if not solveKTUtil(width, height, board, 0, 0, move_x, move_y, pos, print_stage):
+    if not backtracking(width, height, board, 0, 0, move_x, move_y, pos, print_stage):
         print("Solution does not exist")
     else:
         print("Final Result")
@@ -82,7 +79,7 @@ def solveKT(width, height, print_stage=0):
 
 
 # function uses backtracking to find the answer
-def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos, print_stage):
+def backtracking(width, height, board, curr_x, curr_y, move_x, move_y, pos, print_stage):
     """
         The backtracking function for solving the problem
 
@@ -97,8 +94,14 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos, print
         :param pos: number of cells visited already
         :return: A boolean value. If true there is a solution, else there is no solution
     """
+
+    # Following block is for print purposes.
+    # if the parameter is 1, print in console logs
+    # if the parameter is 2, plotting graph using matplotlib
     if print_stage == 1:
         printSolution(width, height, board)
+        time.sleep(1)  # set a delay for real-time display
+
     elif print_stage == 2:
         mx = max([max(line) for line in board])
         for i in range(len(board)):
@@ -109,20 +112,25 @@ def solveKTUtil(width, height, board, curr_x, curr_y, move_x, move_y, pos, print
 
         plot_board(board, width, height)
 
+    # Stop condition of the whole backtrack process.
+    # If we traversed all cells in the board, then stop.
+    # This function does not return a board, it only manipulates the board.
     if pos == width * height:
         return True
 
     # Try all next moves from the current coordinate x, y
     for i in range(8):
-        new_x = curr_x + move_x[i]
-        new_y = curr_y + move_y[i]
-        if isSafe(new_x, new_y, board, width, height):
-            board[new_x][new_y] = pos
-            if solveKTUtil(width, height, board, new_x, new_y, move_x, move_y, pos + 1, print_stage):
+        next_x = curr_x + move_x[i]
+        next_y = curr_y + move_y[i]
+        if isSafe(next_x, next_y, board, width, height):
+            board[next_x][next_y] = pos
+            if backtracking(width, height, board, next_x, next_y, move_x, move_y, pos + 1, print_stage):
                 return True
 
             # Backtracking
-            board[new_x][new_y] = -1
+            board[next_x][next_y] = -1
+
+    # The function would return False if all backtracking process is completed and no solution is found.
     return False
 
 
